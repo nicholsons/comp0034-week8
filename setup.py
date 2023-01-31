@@ -1,22 +1,17 @@
 from setuptools import setup
 
 setup(
-    name="paralympic_app",
-    packages=["paralympic_app"],
-    include_package_data=True,
-    install_requires=["flask", "flask-sqlalchemy"],
-)
-
-# Use the following version for the Iris ML app
-"""
-setup(
-    name="iris_app",
-    packages=["iris_app"],
+    name="comp0034-week8",
+    packages=["paralympic_app", "iris_app"],
     include_package_data=True,
     install_requires=[
         "flask",
+        "flask-sqlalchemy",
         "pandas",
-        "sklearn"
+        "openpyxl",
+        "flask-wtf",
+        "flask-marshmallow",
+        "marshmallow-sqlalchemy",
+        "scikit-learn",
     ],
 )
-"""
