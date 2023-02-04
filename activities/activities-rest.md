@@ -252,7 +252,7 @@ def event_id(event_id):
     """Returns the details for a specified event id"""
     event = db.session.execute(
         db.select(Event).filter_by(event_id=event_id)
-    ).one()
+    ).scalar_one_or_none()
     return events_schema.dump(event)
 ```
 
@@ -271,7 +271,9 @@ You need to know a little about HTTP responses. You will set the [Content-Type](
 def noc_delete(code):
     """Removes a NOC record from the dataset."""
     # Query the database to find the record, return a 404 not found code it the record isn't found
-    region = db.one_or_404(db.select(Region).filter_by(NOC=code))
+    region = db.session.execute(
+        db.select(Region).filter_by(NOC=code)
+    ).scalar_one_or_none()
     # Delete the record you found
     db.session.delete(region)
     db.session.commit()
@@ -335,7 +337,9 @@ To update a request you need to first find the record in the database and then u
 def noc_update(code):
     """Updates changed fields for the NOC record"""
     # Find the current region in the database
-    existing_region = db.one_or_404(db.select(Region).filter_by(NOC=code))
+    existing_region = db.session.execute(
+        db.select(Region).filter_by(NOC=code)
+    ).scalar_one_or_none()
     # Get the updated details from the json sent in the HTTP patch request
     region_json = request.get_json()
     # Use Marshmallow to update the existing records with the changes in the json
@@ -343,8 +347,10 @@ def noc_update(code):
     # Commit the changes to the database
     db.session.commit()
     # Return json showing the updated record
-    existing_region = db.one_or_404(db.select(Region).filter_by(NOC=code))
-    result = region_schema.jsonify(existing_region)
+    updated_region = db.session.execute(
+        db.select(Region).filter_by(NOC=code)
+    ).scalar_one_or_none()
+    result = region_schema.jsonify(updated_region)
     return result
 ```
 
