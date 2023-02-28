@@ -213,7 +213,11 @@ def create_app():
     # Flask-SQLAlchemy
     db.init_app(app)
     # Flask-Marshmallow
-    ma.init_app(app)        
+    ma.init_app(app) 
+
+    with app.app_context():
+        # This is required as you must instantiate the models before marshamallow schemas
+        from paralympic_app.models import Event, Region
 
 ... existing code ...
 ```
