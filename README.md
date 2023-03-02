@@ -14,4 +14,7 @@ IF you need a pyproject.toml then please rename pyproject.txt to pyproject.o
 
 ## Week 8 activities
 
-The activities are accessed from [activities/activities.md](/activities/activities.md)
+The activities are accessed from:
+
+- Iris App: [activities/activities-ml.md](/activities/activities-ml.md)
+- Paralympics App: [activities/activities-rest.md](/activities/activities-rest.md)
