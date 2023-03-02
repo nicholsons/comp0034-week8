@@ -167,5 +167,6 @@ dmypy.json
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
+.idea/*
 
 .DS_Store
