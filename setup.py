@@ -7,11 +7,11 @@ setup(
     install_requires=[
         "flask",
         "flask-sqlalchemy",
-        "pandas",
-        "openpyxl",
+        # "pandas",
+        # "openpyxl",
         "flask-wtf",
         "flask-marshmallow",
         "marshmallow-sqlalchemy",
-        "scikit-learn",
+        # "scikit-learn",
     ],
 )
