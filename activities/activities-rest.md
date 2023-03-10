@@ -222,7 +222,13 @@ def create_app():
 ... existing code ...
 ```
 
-You now need to defined schemas. Create a file called `schemas.py`:
+You now need to define Marshmallow SQLAlchemy schemas. These allow Marshmallow to essentially 'translate' the fields for a SQLAlchemy object and provide methods that allow you to convert the objects to JSON.
+
+There are two methods for creating schemas shown below. The first example you would use if you wish to only provide some, not all, the fields from a class in the data. The second provides all the fields.
+
+For this paralympics example the code is given for you below.
+
+Create a file called `schemas.py`:
 
 ```python
 from paralympic_app.models import Event, Region
@@ -274,11 +280,19 @@ The routes in this app use a combination of:
 
 ### GET routes
 
+First you need to import the Marshmallow schemas and create instances of them. This is the 'Schemas' section in the code below.
+
+There are two variants of the each schema shown, one provides a single result (e.g. one event), the other provides for multiple results (e.g. all events).
+
 The first route is `/noc` which gets a list of all the region codes and returns these in an HTTP response in JSON format.
 
 The Flask-SQLAlchemy query syntax for a 'SELECT' query is exaplained in the [Flask-SQLAlchemy 3.x documentation](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/queries/#select)
 
+You query the database to get the results, then use the schemas to convert the SQLAlchemy result objects to a JSON syntax.
+
 ```python
+from paralympic_app.schemas import RegionSchema, EventSchema
+
 
 # -------
 # Schemas
