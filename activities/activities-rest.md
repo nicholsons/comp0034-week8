@@ -279,6 +279,17 @@ The first route is `/noc` which gets a list of all the region codes and returns 
 The Flask-SQLAlchemy query syntax for a 'SELECT' query is exaplained in the [Flask-SQLAlchemy 3.x documentation](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/queries/#select)
 
 ```python
+
+# -------
+# Schemas
+# -------
+
+regions_schema = RegionSchema(many=True)
+region_schema = RegionSchema()
+events_schema = EventSchema(many=True)
+event_schema = EventSchema()
+
+
 @app.get("/noc")
 def noc():
     """Returns a list of NOC region codes and their details in JSON."""
