@@ -387,6 +387,8 @@ def event_id(event_id):
     return events_schema.dump(event)
 ```
 
+The code above will return the JSON data that is the result of the `schema.dump()`. You could also use the [`flask.make_response()` function](https://flask.palletsprojects.com/en/2.2.x/api/#flask.Flask.make_response) to control what is returned, and an example of this is shown in the delete route below.
+
 Now try and implement the `@app.get("/event")` and `@app.get("/event/<int:event_id>")` routes.
 
 ### DELETE routes
