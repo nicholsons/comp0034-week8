@@ -1,7 +1,7 @@
 # Week 3 activities (REST API version) 3 hours
 
 Check you can run the app before you start:
-`python -m flask --app 'paralympic_app:create_app()' --debug run`
+`python -m flask --app 'paralympic_app:create_app("paralympic_app.config.DevConfig")' --debug run`
 
 Last week you created skeleton functions for the REST API. This week you will:
 
