@@ -13,7 +13,7 @@ Last week you created skeleton functions for the REST API. This week you will:
 **Note**:
 
 - This week's activties do not gracefully handle errors. Error handling will be covered in week 10.
-- This approach uses a SQLite database and a package to handle serialisation. Please refer to the lecture notes as there are alternatives and you are not required to use the method described below for the coursework. You could continue to work with pandas rather than create a database. If your data is not complex, you may be able to use `flask.jsonify` or `flask.make_response` (this method converts a list to JSON for you) to return JSON without the complexity of Marshmallow.
+- This approach uses a SQLite database and a package to handle serialisation. Please refer to the lecture notes as there are alternatives and you are not required to use the method described below for the coursework. You could continue to work with pandas rather than create a database. If your data is not complex, you may be able to use `flask.make_response` ([this method converts a list to JSON for you](https://flask.palletsprojects.com/en/2.2.x/api/#flask.Flask.make_response)) to return JSON without the complexity of Marshmallow or [`flask.json.jsonify`](https://flask.palletsprojects.com/en/2.2.x/api/?highlight=jsonify#flask.json.jsonify).
 
 ## 1. Map the data to SQLAlchemy classes
 
