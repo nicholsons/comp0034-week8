@@ -10,7 +10,10 @@ Last week you created skeleton functions for the REST API. This week you will:
 3. [Update the routes to return the expected JSON (45 mins)](#3-update-the-routes-to-return-json)
 4. [Use the API routes to generate a list of paralympic events on the homepage (30 mins)](#4-use-the-api-to-generate-a-list-of-paralympic-events-on-the-homepage)
 
-Note: this week's activties do not gracefully handle errors. Error handling will be covered in week 10.
+**Note**:
+
+- This week's activties do not gracefully handle errors. Error handling will be covered in week 10.
+- This approach uses a SQLite database and a package to handle serialisation. Please refer to the lecture notes as there are alternatives and you are not required to use the method described below for the coursework. You could continue to work with pandas rather than create a database. If your data is not complex, you may be able to use `flask.jsonify` or `flask.make_response` (this method converts a list to JSON for you) to return JSON without the complexity of Marshmallow.
 
 ## 1. Map the data to SQLAlchemy classes
 
