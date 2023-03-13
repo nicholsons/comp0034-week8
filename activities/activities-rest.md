@@ -198,9 +198,9 @@ class Event(db.Model):
 
 ### 1.4 Update the create_app() code to generate the database tables
 
-You need to an extra line to the `__init__.py` in the paralympic_app package to import the models. To avoid circular imports you have to put this at the end of the file. An example is shown in the [Flask documentation here](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/contexts/#manual-context).
+You need to an extra line to the `__init__.py` in the paralympic_app package to import the models. To avoid circular imports you have to put this after the app is created; so NOT at the top of the file where you would usually place imports. An example is shown in the [Flask documentation here](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/contexts/#manual-context).
 
-For the paralympics app you can place it as per the code below. If you are not creating any new tables then you could also add the code at the very end of the file. If you are using a linter you will need to ignore the warnings about placing the import at the top of the file.
+For the paralympics app you can place it as per the code below. If you are not creating any new tables then you could also add the code at the very end of the file which is also shown in some code examples. If you are using a linter you will need to ignore the warnings about placing the import at the top of the file.
 
 If you have a class that represents a table that is not already in your database, then you need to create that table in the database. For example, if you add login and want to have a table called 'User' to store login details. To do this you add a function `db.create_all()`. This will create the tables if they do not already exist. You need add this line AFTER the model import.
 
