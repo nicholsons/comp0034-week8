@@ -550,7 +550,9 @@ Try and implement routes for `@app.post("/event")` and `@app.patch("/event/<even
 
 ##  4. Use the API to generate a list of paralympic events on the homepage
 
-This is a simple illustration of querying data from an API to generate a page in an application.
+This is a simple illustration of querying data from an API to generate a page in an application. It is included for **groups** as groups are asked to both create a REST API, and create additional functionality. That additional functionality could be pages that are generated from content in the REST API.
+
+If you are working as an individual you do not apply this in the coursework.
 
 Modify the homepage route to make a call the API routes and return
 
