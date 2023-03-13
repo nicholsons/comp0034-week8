@@ -494,6 +494,14 @@ Try and implement routes for `@app.post("/event")` and `@app.patch("/event/<even
 
 ### Check the routes work using Postman
 
+You will not be able to see the results of the routes other than GET requests using a browser, so you will need a tool that will allow you to try them out.
+
+A popular, and free, tool is Postman.
+
+- [Postman documentation](https://learning.postman.com/docs/introduction/overview/)
+- [Postman download](https://www.postman.com/downloads/)
+- [Postman online (requires signup)](https://go.postman.co/home)
+
 - GET for single region: `GET http://127.0.0.1:5000/noc/GBR`
 - GET for all regions: `GET http://127.0.0.1:5000/noc`
 - POST for new region: `POST http://127.0.0.1:5000/noc` In the body select 'raw' and 'JSON' and enter
