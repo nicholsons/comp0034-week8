@@ -502,6 +502,8 @@ A popular, and free, tool is Postman.
 - [Postman download](https://www.postman.com/downloads/)
 - [Postman online (requires signup)](https://go.postman.co/home)
 
+Use postman or similar to try the routes for the paralympic app, e.g.:
+
 - GET for single region: `GET http://127.0.0.1:5000/noc/GBR`
 - GET for all regions: `GET http://127.0.0.1:5000/noc`
 - POST for new region: `POST http://127.0.0.1:5000/noc` In the body select 'raw' and 'JSON' and enter
