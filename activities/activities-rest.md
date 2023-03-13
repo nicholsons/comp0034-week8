@@ -14,22 +14,22 @@ Note: this week's activties do not gracefully handle errors. Error handling will
 
 ## 1. Map the data to SQLAlchemy classes
 
+The logical steps for this part of the activity are:
+
+- 1.1 Create a sqlite database in the data folder of the paralympic_app, and load the data from csv and save to a SQLite database.
+- 1.2 Modify the `paralympic_app/__init__.py` code to create a SQLAlchemy object that handles the connection to the database:
+  - Create a SQLAlchemy instance
+  - Add configuration parameters to the Flask app instance to tell it the location of the database file and to not track modifications.
+  - Modify the `create_app` function so that after the Flask app instance is created, it is registered to the SQLAlchemy instance.
+    Modify the `create_app` function after the Flask app is registered to the SQLAlchemy instance to reference the tables in the database (you need this so that the app can map the tables to Python classes).
+- 1.3 Define the Python classes ('models' in our Flask app) that will map to the data. Include a `repr` function for each class that provides a string representation of the class.
+- 1.4 Update the create_app() code to generate the database.
+
+## 1.1 Create a SQLite database from a csv file
+
 Install Flask-SQLAlchemy if you have not already `pip install Flask-SQLAlchemy`. This should also install SQLAlchemy.
 
 You may want to install the VS Code extension SQLite Viewer to allow you to view the content of a database through the VS Code interface.
-
-The logical steps for this activity are:
-
-1. Create a sqlite database in the data folder of the paralympic_app, and load the data from csv and save to a SQLite database.
-2. Modify the `paralympic_app/__init__.py` code:
-    - Create a SQLAlchemy instance
-    - Add configuration parameters to the Flask app instance to tell it the location of the database file and to not track modifications.
-    - Modify the `create_app` function so that after the Flask app instance is created, it is registered to the SQLAlchemy instance.
-    Modify the `create_app` function after the Flask app is registered to the SQLAlchemy instance to reference the tables in the database (you need this so that the app can map the tables to Python classes).
-
-3. Define the Python classes ('models' in our Flask app) that will map to the data. Include a `repr` function for each class that provides a string representation of the class.
-
-### Why we are using Flask-SQLAlechemy, SQLAlchemy with an SQLite database
 
 When you install Flask-SQLAlchemy, the SQLAlchemy package will also be installed. Together they provide functionality that lets you more easily create Python classes that map to database tables; and handles the database interaction, i.e. SQL queries, using Python functions. This follows a design pattern called ORM, Object Relational Mapper. An ORM encapsulates, or wraps, data stored in a database into an object that can be used in Python (or other object-oriented language).
 
@@ -39,9 +39,9 @@ If you want to work directly with .csv files for coursework 2 and not a database
 
 SQLite allows you to store the data in tables. If your data is a single worksheet, then you can save it to a single table in SQLAlchemy. Groups however will have designed a database structure which likely has multiple tables that are related through the use of primary and secondary keys. This tutorial will cover a data set that has multiple tables and those that have a single table. There will be some unfamiliar technical terms for those students who did not follow the database lecture and activities from COMP0035.
 
-### 1.1 Create a SQLite database from a csv file
+A created version of the paralympics database is included in the code. The code to generate this is given in `csv_to_sqlite.py` or `data\cvs_to_sqlite_with_relations.csv`. The two versions differ and are explained below, though either should result in a usable database.
 
-The code for this is given you in `csv_to_sqlite.py`. There are many ways to save csv as sqlite. The following uses libraries you should be familiar with from COMP0035, namely pandas and pathlib; and introduces some sqlalchemy code.
+There are many ways to save csv as sqlite. The following uses libraries you should be familiar with from COMP0035, namely pandas and pathlib; and introduces some sqlalchemy code.
 
 Sqlachemy is used to create the database engine. The engine handles the connection to the database file and operates as if a sqlite database.
 
@@ -51,11 +51,19 @@ The code is commented and can be found in the data directory.
 
 `data\cvs_to_sqlite_with_relations.csv` creates a relationship between the `event` and `region` tables using the `NOC` attribute as primary key in region and foreign key in event. Groups who designed a database with multiple tables would need this approach.
 
-### 1.2 Modify the code to create and configure the Flask app
+### 1.2 Modify the code to create and configure the Flask app for SQLAlchemy
 
-Refer to the [Flask-SQLAlchemy documentation for the configuration](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/quickstart/#configure-the-extension). T.
+Refer to the [Flask-SQLAlchemy documentation for the configuration](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/quickstart/#configure-the-extension).
+
+You will modify the `paralympic_app/__init__.py:create_app()` code to create a SQLAlchemy object and initialise it for the app. This will handle the connection to the database
 
 Modify the `create_app` function to create an instance of SQLAlchemy. There are two ways to do this in the Flask-SQLAlchemy documentation. Let's use the version that creates the global instance and then initialises it for the Flask app.
+
+The code below does the following **in this order**:
+
+- before the create_app() create an instance of a Flask-SQLAlchemy object
+- inside the create_app() function, as soon as you create the app, add configuration parameters that state the location of the database file.
+- inside the create_app() initialise the SQLAchemy extension to the Flask app. This will recognise the database location from the SQLALCHEMY_DATABASE_URI. In the example below the code is called from a function named `initialize_extenstions(app)`, or your could just replace this line with `db.init_app(app)` instead.
 
 ```python
 from pathlib import Path
@@ -98,11 +106,13 @@ def initialize_extensions(app):
     db.init_app(app)
 ```
 
-### 1.3 Define the model classes
+### 1.3 Define the model classes that will map from the database to Python classes
 
 Create a python file. This is often named `models.py` but doesn't have to be.
 
 Add the following code to create two classes that represents the data in the database.
+
+The code is explained in more detail below.
 
 ```python
 from paralympic_app import db
@@ -163,9 +173,11 @@ class Event(db.Model):
 The syntax for the table is from the [Flask-SQLAlchemy documentation](https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/#a-minimal-application). The table is defined as follows:
 
 - Define the class with an appropriate name.
-- The tablename should match the tablename in the databse.
+- The tablename should match the tablename in the database.
 - The column names should match the column names used in the database.
 - The column datatypes should match the data types used in the database.
+
+The classes inherit the Flask-SQLAlchemy Model class. This automically gives the class access to functions that will handle the constructor so you don't need to define it.
 
 The `relationship` between the two tables is defined used the primary and foreign keys with the db.relationship function as follows:
 
@@ -184,16 +196,48 @@ class Event(db.Model):
     region = db.relationship("Region", back_populates="events")    
 ```
 
+### 1.4 Update the create_app() code to generate the database tables
+
+You need to an extra line to the `__init__.py` in the paralympic_app package to import the models. To avoid circular imports you have to put this at the end of the file. An example is shown in the [Flask documentation here](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/contexts/#manual-context).
+
+For the paralympics app you can place it as per the code below. If you are not creating any new tables then you could also add the code at the very end of the file. If you are using a linter you will need to ignore the warnings about placing the import at the top of the file.
+
+If you have a class that represents a table that is not already in your database, then you need to create that table in the database. For example, if you add login and want to have a table called 'User' to store login details. To do this you add a function `db.create_all()`. This will create the tables if they do not already exist. You need add this line AFTER the model import.
+
+```python
+def create_app(config_object):
+    """Create and configure the Flask app"""
+    app = Flask(__name__)
+    app.config.from_object(config_object)
+
+    initialize_extensions(app)
+
+    # Add the model imports here
+    from paralympic_app.models import Event, Region
+
+    with app.app_context():
+        from paralympic_app import routes
+        # Create the tables in the database if they do not already exist
+        db.create_all()
+
+    return app
+```
+
 ## 2. Serialise / deserialise the data
 
 Since this can become complex, use libraries to help you. This activity uses:
 
 - [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
-- marshmallow-sqlalchemy
+- [marshmallow-sqlalchemy](https://marshmallow-sqlalchemy.readthedocs.io/en/latest/)
 
-Install both of the above into your venv (may already be installed if you used `pip install -r requirements.txt` from the week 4 repository).
+Install both of the above into your venv if you do not already have them. The command `pip list` will show what is already intalled in your venv.
 
-### Configure the app for Flask-Marshmallow
+The steps for this part are:
+
+- 2.1 Configure the app for Flask-Marshmallow
+- 2.2 Create Marshmall SQLAlchemy schemas
+
+### 2.1 Configure the app for Flask-Marshmallow
 
 Flask-Marshmallow will be used with Flask-SQLAlchemy so [this part of the documentation is most relevant](https://flask-marshmallow.readthedocs.io/en/latest/#optional-flask-sqlalchemy-integration). The documentation states that Flask-SQLAlchemy must be initialized before Flask-Marshmallow.
 
@@ -222,11 +266,25 @@ def create_app():
 ... existing code ...
 ```
 
-You now need to define Marshmallow SQLAlchemy schemas. These allow Marshmallow to essentially 'translate' the fields for a SQLAlchemy object and provide methods that allow you to convert the objects to JSON.
+### 2.2 Create Marshmall SQLAlchemy schemas
 
-There are two methods for creating schemas shown below. The first example you would use if you wish to only provide some, not all, the fields from a class in the data. The second provides all the fields.
+You now need to define [Marshmallow SQLAlchemy schemas as per their documentation](https://marshmallow-sqlalchemy.readthedocs.io/en/latest/#generate-marshmallow-schemas). These allow Marshmallow to essentially 'translate' the fields for a SQLAlchemy object and provide methods that allow you to convert the objects to JSON.
 
-For this paralympics example the code is given for you below.
+For this paralympics example the code is given for you below. There are two methods for creating schemas in this code.
+
+The first example (for Region) you would use if you wish to only provide some, not all, the fields from a class in the data. This inherits `ma.SQLAlchemySchema` and you then need to state the fields that you wish to be included in the data.
+
+The second example (for Event) provides all the fields. This inherits `ma.SQLAlchemyAutoSchema` and this automatically includes all the fields from your models class so you do not have to repeat them.
+
+`model = Region` states the name of the model class. You need to include this.
+
+`sqla_session = db.session` tells Marshmallow the session to use to work with the database. You need to include this.
+
+`load_instance = True` is optional and will deserialize to model instances
+
+`include_fk = True` is only needed if you want the foreign key field to be included in the data.
+
+`include_relationships = True` is only needed if you have relationships between tables.
 
 Create a file called `schemas.py`:
 
@@ -278,17 +336,13 @@ The routes in this app use a combination of:
 - Flask-Marshmallow for the serialisation/deserialisation of the data to and from JSON
 - Flask make_response to create HTTP responses where there is no other data to return
 
-### GET routes
+### Create instances of the schemas
 
-First you need to import the Marshmallow schemas and create instances of them. This is the 'Schemas' section in the code below.
+First you need to import the Marshmallow SQLAlchemy schemas and create instances of them. This is the 'Schemas' section in the code below.
 
 There are two variants of the each schema shown, one provides a single result (e.g. one event), the other provides for multiple results (e.g. all events).
 
-The first route is `/noc` which gets a list of all the region codes and returns these in an HTTP response in JSON format.
-
-The Flask-SQLAlchemy query syntax for a 'SELECT' query is exaplained in the [Flask-SQLAlchemy 3.x documentation](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/queries/#select)
-
-You query the database to get the results, then use the schemas to convert the SQLAlchemy result objects to a JSON syntax.
+Add the following code to the file where the routes are defined:
 
 ```python
 from paralympic_app.schemas import RegionSchema, EventSchema
@@ -302,8 +356,17 @@ regions_schema = RegionSchema(many=True)
 region_schema = RegionSchema()
 events_schema = EventSchema(many=True)
 event_schema = EventSchema()
+```
 
+### GET routes
 
+The first route is `/noc` which gets a list of all the region codes and returns these in an HTTP response in JSON format.
+
+The Flask-SQLAlchemy query syntax for a 'SELECT' query is exaplained in the [Flask-SQLAlchemy 3.x documentation](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/queries/#select)
+
+You query the database to get the results, then use the schemas to convert the SQLAlchemy result objects to a JSON syntax.
+
+```python
 @app.get("/noc")
 def noc():
     """Returns a list of NOC region codes and their details in JSON."""
@@ -542,8 +605,7 @@ Investigate [APIFairy](https://testdriven.io/blog/flask-apifairy/) from Miguel G
 
 [Tutorial explaining how to create a database using Flask-SQLAlchemy with relationships between the tables](https://www.digitalocean.com/community/tutorials/how-to-use-one-to-many-database-relationships-with-flask-sqlalchemy)
 
-Flask-SQLAlchemy
+Flask-SQLAlchemy and Marshmallow:
 
-<https://akashsenta.com/blog/flask-rest-api-with-sqlalchemy-and-marshmallow/>
-
-<https://medium.com/craftsmenltd/flask-with-sqlalchemy-marshmallow-2ec34ecfd9d4>
+- <https://akashsenta.com/blog/flask-rest-api-with-sqlalchemy-and-marshmallow/>
+- <https://medium.com/craftsmenltd/flask-with-sqlalchemy-marshmallow-2ec34ecfd9d4>
